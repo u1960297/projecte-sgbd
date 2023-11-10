@@ -1,11 +1,14 @@
 :host {
     ::ng-deep .p-card > * {
+        width: 200px;
+        height: 400px;
         padding: 1rem;
         margin: 1rem;
     }
 }
 
 .recipe {
-    max-width: 250px; 
-    max-height: 175px;
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
 }
