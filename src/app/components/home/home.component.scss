@@ -1,10 +1,29 @@
-:host {
-    ::ng-deep .p-card > * {
-        width: 200px;
-        height: 400px;
-        padding: 1rem;
-        margin: 1rem;
-    }
+:host ::ng-deep .p-panel.p-component { 
+    border-radius: 10px; 
+} 
+:host ::ng-deep .p-panel .p-panel-header { 
+    border: 2px solid;
+    border-color: white;
+    border-radius: 10px;
+    background: rgb(37, 129, 235) !important; 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-header .p-panel-header-icon { 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-content { 
+    border-radius: 10px;
+    background: white !important; 
+    color: black !important; 
+    font-weight: 500; 
+    font-size: 18px; 
+} 
+
+:host ::ng-deep .p-card > * {
+    width: 200px;
+    height: 400px;
+    padding: 1rem;
+    margin: 1rem;
 }
 
 .recipe {
