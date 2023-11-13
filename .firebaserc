@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "projecte-sgbd-4rgeinf": {
+      "hosting": {
+        "projecte": [
+          "projecte-sgbd-4rgeinf"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "projecte-sgbd-4rgeinf"
+  }
+}
