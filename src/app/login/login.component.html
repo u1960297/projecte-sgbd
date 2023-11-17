@@ -1,26 +1,24 @@
 <div class="container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title class="login-title">Login</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+  <p-card>
+    <p-header>
+      <h2 class="login-title">Login</h2>
+    </p-header>
       <form #loginForm="ngForm" (ngSubmit)="login(loginForm.value)">
-        <mat-form-field appearance="fill">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" id="email" name="email" ngModel required>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" id="password" name="password" ngModel required>
-        </mat-form-field>
+        <div class="p-field">
+          <label for="email">Email</label>
+          <input pInputText type="email" id="email" name="email" ngModel required>
+        </div>
+        <div class="p-field">
+          <label for="password">Password</label>
+          <input pInputText type="password" id="password" name="password" ngModel required>
+        </div>
         <div class="button-container">
-          <button mat-raised-button color="primary" type="submit">Login</button>
-          <button mat-button routerLink="/register">Sign up</button>
+          <button pButton type="submit" label="Login"></button>
+          <button pButton type="button" label="Sign up" routerLink="/register"></button>
         </div>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </p-card>
   <div class="google-login">
-    <button mat-stroked-button color="accent" (click)="loginWithGoogle()">Login with Google</button>
+    <button pButton type="button" label="Login with Google" (click)="loginWithGoogle()"></button>
   </div>
 </div>

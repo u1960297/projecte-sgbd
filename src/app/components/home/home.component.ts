@@ -3,6 +3,7 @@ import { OnInit } from '@angular/core';
 import { Receipts } from '../../models/receipts.model';
 import { Ingredients } from '../../models/ingredients.model';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,13 +14,22 @@ export class HomeComponent implements OnInit {
 
   public showRecipe: boolean = false;
   public currentReceipt: Receipts = new Receipts;
-  receipts: Receipts[] = []; 
+  receipts: Receipts[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public authService: AuthService) {}
 
   ngOnInit(): void {
     
     this.receipts = this.getReceptes(); // Crida a la firebase per obtenir receptes.
+  }
+
+  goToLogin(): void { // Metode per anar al login.
+    this.router.navigate(['/login']);
+  }
+
+  logout(): void { // Metode per fer logout.
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   getReceptes(): Receipts[] { // Ara tenim receptes de prova

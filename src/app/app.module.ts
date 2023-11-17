@@ -15,6 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
+import {MatDialogModule} from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -55,6 +56,7 @@ import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-confi
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatDialogModule,
 
     MenubarModule,
     ToastModule,

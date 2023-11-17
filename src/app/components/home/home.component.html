@@ -1,6 +1,8 @@
 <div style="display: flex; justify-content: flex-end;">
     <!-- Altres elements -->
-    <p-button label="Profile" icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+    <p-button *ngIf="authService.isLoggedIn()" label="Profile" icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+    <p-button *ngIf="!authService.isLoggedIn()" label="Inicia sessió" icon="pi pi-sign-in" (onClick)="goToLogin()"></p-button>
+    <p-button *ngIf="authService.isLoggedIn()" label="Logout" icon="pi pi-plus" (onClick)="logout()"></p-button>
 </div>
 
 <br>
