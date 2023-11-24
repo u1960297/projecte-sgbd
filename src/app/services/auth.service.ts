@@ -6,7 +6,8 @@ import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
 import { Injectable } from '@angular/core';
 import { LoginData } from 'src/app/models/login.model';
 import {UserData} from 'src/app/models/user.model';
-import { getDoc } from '@angular/fire/firestore';
+import { collection, getDoc, getDocs } from '@angular/fire/firestore';
+import { Receipts } from '../models/receipts.model';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +56,19 @@ export class AuthService {
 
   logout() {
     return signOut(this.auth);
+  }
+
+  async getReceptes(): Promise<Receipts[]> {
+    const db = getFirestore();
+    const recipesRef = collection(db, "recipes");
+    const receptes: Receipts[] = [];
+    const querySnapshot = await getDocs(recipesRef);
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+      const recepta = doc.data() as Receipts;
+      receptes.push(recepta);
+    });
+    return receptes;
   }
 
   //Funció per afegir usuari a la base de dades de firebase (no autenticació) per defecte
