@@ -10,11 +10,7 @@
 <p-panel header="Receipts">
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
         <p-card *ngFor="let receipt of receipts" (dblclick)="goToReceipt(receipt)">
-            <img class="recipe" [src]="receipt.image" alt="{{receipt.name}}">
-            <p>{{receipt.name}}</p>
-            <p>{{receipt.time}}</p>
-            <p>{{receipt.difficulty}}</p>
-            <p>{{receipt.description}}</p>
+            <app-receipt [receipt]="receipt"></app-receipt>
         </p-card>
     </div> 
 </p-panel>
