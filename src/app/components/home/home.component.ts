@@ -4,6 +4,8 @@ import { Receipts } from '../../models/receipts.model';
 import { Ingredients } from '../../models/ingredients.model';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, getDoc, getDocs } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +34,15 @@ export class HomeComponent implements OnInit {
   }
 
   async getReceptes(): Promise<Receipts[]> { // Ara tenim receptes de prova
-    const receptes = await this.authService.getReceptes();
+    const db = getFirestore();
+    const recipesRef = collection(db, "recipes");
+    const receptes: Receipts[] = [];
+    const querySnapshot = await getDocs(recipesRef);
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+      const recepta = doc.data() as Receipts;
+      receptes.push(recepta);
+    });
     return receptes as Receipts[];
   }
 

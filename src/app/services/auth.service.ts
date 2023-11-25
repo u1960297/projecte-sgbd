@@ -58,18 +58,6 @@ export class AuthService {
     return signOut(this.auth);
   }
 
-  async getReceptes(): Promise<Receipts[]> {
-    const db = getFirestore();
-    const recipesRef = collection(db, "recipes");
-    const receptes: Receipts[] = [];
-    const querySnapshot = await getDocs(recipesRef);
-    querySnapshot.forEach((doc) => {
-      console.log(`${doc.id} => ${doc.data()}`);
-      const recepta = doc.data() as Receipts;
-      receptes.push(recepta);
-    });
-    return receptes;
-  }
 
   //Funció per afegir usuari a la base de dades de firebase (no autenticació) per defecte
   async addUserToFirestoreDefault(user: string, userInfo: User) {
