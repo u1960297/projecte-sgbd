@@ -1,40 +1,72 @@
-import {Auth, GoogleAuthProvider, User, UserCredential, createUserWithEmailAndPassword, getAdditionalUserInfo, onAuthStateChanged, signInWithEmailAndPassword,signInWithPopup, signOut} from '@angular/fire/auth';
-import { getAuth, signInWithCredential, linkWithCredential, OAuthProvider } from "firebase/auth";
-import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
-
-
+import {Auth, GoogleAuthProvider, User, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword,signInWithPopup, signOut, updateProfile} from '@angular/fire/auth';
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { Injectable } from '@angular/core';
 import { LoginData } from 'src/app/models/login.model';
 import {UserData} from 'src/app/models/user.model';
 import { collection, getDoc, getDocs } from '@angular/fire/firestore';
 import { Receipts } from '../models/receipts.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   user: UserData | null = null;
+  private db = getFirestore();
 
   constructor(private auth: Auth) {
-    onAuthStateChanged(this.auth, async (user) => {
-      if (user) {
-        this.user = await this.fetchUserDataFromFirestore(user.uid);
-        this.addUserToFirestoreDefault(user.uid, user);
-      } else {
-        this.user = null;
+    onAuthStateChanged(auth, (user) => {
+      if (user) { //usuari autenticat
+        const uid = user.uid;
+        if (user.email) {
+          this.updateUserData(uid, user.email);
+        }
+      } else { //usuari no autenticat
       }
     });
   }
 
   async fetchUserDataFromFirestore(userId: string): Promise<UserData | null> {
+    // Obtenim una instància de Firestore
     const db = getFirestore();
+
+    // Creem una referència al document de l'usuari a Firestore
     const userRef = doc(db, "users", userId);
+
+    // Obtenim el document de l'usuari
     const userDoc = await getDoc(userRef);
+
+    // Si el document existeix, el retornem com a objecte UserData
     if (userDoc.exists()) {
       return userDoc.data() as UserData;
     } else {
+      // Si el document no existeix, mostrem un missatge a la consola i retornem null
       console.log("No such document!");
       return null;
+    }
+  }
+
+  private async updateUserData(uid: string, email: string) {
+    // Creem una referència al document de l'usuari a Firestore
+    const userRef = doc(this.db, 'users', uid);
+
+    // Obtenim el document de l'usuari
+    const docSnap = await getDoc(userRef);
+
+    // Si el document no existeix, creem un nou document per a l'usuari
+    if (!docSnap.exists()) {
+      // Creem un nou nom d'usuari a partir de l'email
+      const newName = email.split('@')[0];
+
+      // Creem un objecte UserData amb l'email, el nom i la imatge de l'usuari
+      const userData: UserData = {
+        email: email,
+        name: newName,
+        image: 'https://www.somoscomarca.es/wp-content/uploads/2020/05/somoscomarca_arua_empresa_barpaco_cristina_somoscomaercio_2020_05_30-1.jpg',
+      };
+
+      // Afegim l'objecte UserData al document de l'usuari a Firestore
+      await setDoc(userRef, userData, { merge: true });
     }
   }
 
@@ -42,8 +74,12 @@ export class AuthService {
     return this.auth.currentUser;
   }
 
-  isLoggedIn(): boolean {
-    return this.user !== null;
+  getCurrentUserUID(): string | null {
+    return this.auth.currentUser?.uid || null;
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    return this.auth.currentUser !== null;
   }
 
   login({ email, password }: LoginData) {
@@ -58,20 +94,6 @@ export class AuthService {
     return signOut(this.auth);
   }
 
-
-  //Funció per afegir usuari a la base de dades de firebase (no autenticació) per defecte
-  async addUserToFirestoreDefault(user: string, userInfo: User) {
-    if (userInfo.email) {
-      const db = getFirestore();
-      const userRef = doc(db, "users", user);
-      const defaultName = userInfo.email.split('@')[0];
-      await setDoc(userRef, {
-        email: userInfo.email,
-        name: defaultName,
-        image: 'https://images.mnstatic.com/60/5d/605d4ec141c246e909886e26c6cf8b6d.jpg'
-      }, { merge: true });
-    }
-  }
 
   loginWithGoogle() {
     return signInWithPopup(this.auth, new GoogleAuthProvider());

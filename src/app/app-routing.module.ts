@@ -8,7 +8,7 @@ import { RegisterPageComponent } from './register/register.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login', // Redirigeix la ruta buida a la pàgina de login
+    redirectTo: '/home', // Redirigeix la ruta buida a la pàgina de home
     pathMatch: 'full',
   },
   {
