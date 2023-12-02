@@ -8,8 +8,12 @@
 <br>
 
 <p-panel header="Receipts">
+    <div>
+        <p-button label="Filtres" (onClick)="goToFilters()"></p-button>
+    </div>
+
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
-        <p-card *ngFor="let receipt of receipts" (dblclick)="goToReceipt(receipt)">
+        <p-card *ngFor="let receipt of filteredReceipts" (dblclick)="goToReceipt(receipt)">
             <app-receipt [receipt]="receipt"></app-receipt>
         </p-card>
     </div> 
@@ -18,4 +22,28 @@
 <p-dialog header="{{currentReceipt.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
         [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
     <app-receipt [receipt]="currentReceipt"></app-receipt>
+</p-dialog>
+
+<p-dialog header="Filtres" [(visible)]="showFilters" [style]="{width: '50vw'}" 
+        [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+    <div>
+        <div class="filtreNom">
+            <p>Nom</p>
+            <input pInputText type="text" [(ngModel)]="filterName" />
+        </div>
+        <div class="filtreDurada">
+            <p>Durada</p>
+            <input pInputText type="number" [(ngModel)]="filterDuration" />
+        </div>
+        <div class="filtreDificultat">
+            <p>Dificultat</p>
+            <p-button label="Fàcil" (onClick)="filterDifficulty('Fàcil')"></p-button>
+            <p-button label="Mitjà" (onClick)="filterDifficulty('Mitjana')"></p-button>
+            <p-button label="Difícil" (onClick)="filterDifficulty('Difícil')"></p-button>
+        </div>
+        <div class="botonsFiltrar">
+            <p-button label="Filtrar" (onClick)="applyFilters()"></p-button>
+            <p-button class="treureFiltres" *ngIf="showRemoveFilters" label="Treure filtres" (onClick)="removeFilters()"></p-button>
+        </div>
+    </div>
 </p-dialog>

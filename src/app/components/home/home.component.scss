@@ -31,3 +31,28 @@
     height: 150px;
     object-fit: contain;
 }
+
+.filtreNom {
+    margin-top: 1rem;
+}
+
+.filtreDurada {
+    margin-top: 3rem;
+}
+
+.filtreDificultat {
+    margin-top: 3rem;
+}
+
+.filtreDificultat p-button {
+    margin-right: 1rem;
+}
+
+:host ::ng-deep .botonsFiltrar .p-button{
+    margin-top : 5rem;
+    margin-right: 1rem;
+}
+
+:host ::ng-deep .botonsFiltrar .treureFiltres .p-button{
+    background-color: red;
+}
