@@ -6,6 +6,7 @@ import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
 import { DocumentReference, addDoc, collection, getDoc, getDocs } from '@angular/fire/firestore';
 import { Ingredients } from '../models/ingredients.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { PhotosService } from 'src/app/services/photos.service';
 
 @Component({
   selector: 'app-form-recipe',
@@ -28,7 +29,7 @@ export class FormRecipeComponent implements OnInit {
   selectedImage: File | null = null;
   imageDownloadURL: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private PhotosService: PhotosService) {}
 
   ngOnInit(): void { 
     console.log(this.mode);
@@ -129,8 +130,8 @@ export class FormRecipeComponent implements OnInit {
 
   onSelect(event: any) {
     console.log("foto afegida");
-    const file = event.files[0]; // Obté el fitxer carregat
-    this.selectedImage = file; // Assigna el fitxer a la variable selectedImage
+    const file = event.files[0];
+    this.selectedImage = file;
   }
 
   async addRecipe() {
@@ -152,19 +153,14 @@ export class FormRecipeComponent implements OnInit {
         time: formData.time,
         image: ''
       };
-  
-      const storage = getStorage();
-      const storageRef = ref(storage, 'images/recipes/');
-  
-      // Puja la imatge a Firebase Storage
-      uploadBytes(storageRef, this.selectedImage as Blob)
-        .then((snapshot) => {
-          console.log('Imatge pujada correctament:', snapshot);
-  
-          // Ara pots afegir la recepta a Firestore amb la URL de descàrrega de la imatge si és necessari
-          newRecipe.image = snapshot.ref.fullPath; // Utilitza la ruta de l'arxiu pujat com a URL d'imatge
-  
-          // Continua amb l'addició de la recepta a Firestore
+      const recipeName = this.recipeForm.value["name"];
+      const filePath = `/images/recipes/${recipeName}`;
+
+      // Pugem la imatge al servidor
+      this.PhotosService.uploadImage(filePath, this.selectedImage).then((url: string) => {
+        // Actualitzem la imatge de la recepta a la nostra aplicació
+          newRecipe.image = url;
+
           const db = getFirestore();
           const recipesCollection = collection(db, 'recipes');
   
@@ -175,11 +171,8 @@ export class FormRecipeComponent implements OnInit {
             })
             .catch((error) => {
               console.error('Error adding recipe:', error);
-            });
-        })
-        .catch((error) => {
-          console.error('Error en pujar la imatge:', error);
-        });
+          });
+      });
     } else {
       console.log('Invalid form. Please fill in all required fields and select an image.');
     }
