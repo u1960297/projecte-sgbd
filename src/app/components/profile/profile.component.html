@@ -1,6 +1,6 @@
 <div class="profile-container" *ngIf="userData">
     <img [src]="userData.image" class="profile-image" alt="Profile Image">
-    <h2 class="profile-name">{{ userData.name }}</h2>
+    <h2 class="profile-name">Welcome, {{ userData.name }}</h2>
     <input type="file" (change)="uploadProfileImage($event)" class="upload-button">
 
     <!-- Add a form for editing the user's name -->
@@ -8,4 +8,7 @@
         <input type="text" #newName placeholder="New name" required>
         <button type="submit">Update Name</button>
     </form>
+
+    <br>
+
 </div>

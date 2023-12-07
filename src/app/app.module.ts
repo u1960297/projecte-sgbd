@@ -9,7 +9,13 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
 import { DialogModule } from 'primeng/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { FileUploadModule } from 'primeng/fileupload';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,6 +43,7 @@ import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { FormRecipeComponent } from './form-recipe/form-recipe.component';
 
 @NgModule({
   declarations: [
@@ -45,13 +52,15 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
     ProfileComponent,
     ReceiptComponent,
     LoginPageComponent,
-    RegisterPageComponent
+    RegisterPageComponent,
+    FormRecipeComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    ReactiveFormsModule,
 
     MatCardModule,
     MatFormFieldModule,
@@ -66,6 +75,12 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
     ButtonModule,
     PanelModule,
     DialogModule,
+    DropdownModule,
+    InputTextModule,
+    InputTextareaModule,
+    FileUploadModule,
+    RadioButtonModule,
+    MultiSelectModule,
     provideFirebaseApp(() => initializeApp({"projectId":"projecte-sgbd-4rgeinf","appId":"1:1005676375167:web:fcbb0ca5dabb6fe6d9634a","storageBucket":"projecte-sgbd-4rgeinf.appspot.com","apiKey":"AIzaSyCcm3xfUl0TB8DVu4usdETrbjXcnvHQThI","authDomain":"projecte-sgbd-4rgeinf.firebaseapp.com","messagingSenderId":"1005676375167","measurementId":"G-2GCLEQYJP8"})),
     provideAuth(() => getAuth()),
     provideAnalytics(() => getAnalytics()),

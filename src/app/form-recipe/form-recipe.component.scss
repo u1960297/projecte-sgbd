@@ -1,0 +1,21 @@
+form {
+    display: grid;
+    gap: 1rem; /* Espai entre els elements del grid (els camps del formulari) */
+    max-width: 400px; /* Amplada màxima del formulari */
+    margin: auto; /* Centra el formulari a la pàgina */
+}
+  
+label {
+  display: block;
+  margin-bottom: 0.5rem; /* Espai entre les etiquetes i els camps d'entrada */
+}
+
+.current-image-container {
+  max-width: 300px; /* Defineix la mida màxima de l'ample */
+  margin-bottom: 10px; /* Afegeix un espai entre la imatge i els altres elements */
+}
+
+.current-image {
+  max-width: 100%; /* Garanteix que la imatge no superi el seu contenidor */
+  height: auto; /* Manté la proporció de l'altura */
+}

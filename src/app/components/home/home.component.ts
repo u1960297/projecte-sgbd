@@ -23,6 +23,9 @@ export class HomeComponent implements OnInit {
   showFilters: boolean = false;
   showRemoveFilters: boolean = false;
 
+  recipeForm: boolean = false;
+  formMode: string = ''; // formMode = 'new' per crear recepta i 'edit' per editarla
+
   filterName: string = '';
   filterDuration: number = 0;
   selectedDifficulty: string = '';
@@ -70,6 +73,19 @@ export class HomeComponent implements OnInit {
   goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
     this.showRecipe = true;
     this.currentReceipt = receipt;
+  }
+
+  newRecipe() { // Metode per obrir el formulari de recepta
+    this.recipeForm = true;
+    this.formMode = 'new'; 
+  }
+
+  closeForm() { 
+    this.recipeForm = false;
+    this.getReceptes().then((receptes) => {
+      this.receipts = receptes;
+      this.filteredReceipts = receptes;
+    });
   }
 
   goToFilters(): void{
