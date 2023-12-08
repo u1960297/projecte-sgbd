@@ -16,7 +16,7 @@ import { PhotosService } from 'src/app/services/photos.service';
 
 export class FormRecipeComponent implements OnInit {
   @Input() mode: string = ''; // 'new' o 'edit'
-  @Input() recipeId: string = '3';
+  @Input() recipeId: string = '';
   @Output() addedSuccessfully = new EventEmitter<boolean>();
 
   recipeForm!: FormGroup;

@@ -78,7 +78,7 @@ export class HomeComponent implements OnInit {
 
   newRecipe() { // Metode per obrir el formulari de recepta
     this.recipeForm = true;
-    this.formMode = 'edit'; 
+    this.formMode = 'new'; 
   }
 
   closeForm() { 
