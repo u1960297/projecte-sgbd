@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { LoginData } from 'src/app/models/login.model';
 import {UserData} from 'src/app/models/user.model';
 import { collection, getDoc, getDocs } from '@angular/fire/firestore';
-import { Receipts } from '../models/receipts.model';
+import { Recipes } from '../models/recipes.model';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({

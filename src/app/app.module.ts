@@ -27,7 +27,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ReceiptComponent } from './components/receipt/receipt.component';
+import { RecipeComponent } from './components/recipe/recipe.component';
 import { LoginPageComponent } from './login/login.component';
 import { RegisterPageComponent } from './register/register.component';
 
@@ -50,7 +50,7 @@ import { FormRecipeComponent } from './form-recipe/form-recipe.component';
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    ReceiptComponent,
+    RecipeComponent,
     LoginPageComponent,
     RegisterPageComponent,
     FormRecipeComponent

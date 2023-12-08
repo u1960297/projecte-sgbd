@@ -1,7 +1,6 @@
 form {
     display: grid;
-    gap: 1rem; /* Espai entre els elements del grid (els camps del formulari) */
-    max-width: 400px; /* Amplada màxima del formulari */
+    gap: 1rem;
     margin: auto; /* Centra el formulari a la pàgina */
 }
   
@@ -18,4 +17,8 @@ label {
 .current-image {
   max-width: 100%; /* Garanteix que la imatge no superi el seu contenidor */
   height: auto; /* Manté la proporció de l'altura */
+}
+
+.titol {
+  font-weight: bold;
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { Receipts } from '../../models/receipts.model';
+import { Recipes } from '../../models/recipes.model';
 import { Ingredients } from '../../models/ingredients.model';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 
   private db = getFirestore();
   showRecipe: boolean = false;
-  currentReceipt: Receipts = new Receipts;
+  currentRecipe: Recipes = new Recipes;
   showFilters: boolean = false;
   showRemoveFilters: boolean = false;
 
@@ -29,8 +29,8 @@ export class HomeComponent implements OnInit {
   filterName: string = '';
   filterDuration: number = 0;
   selectedDifficulty: string = '';
-  receipts: Receipts[] = [];
-  filteredReceipts: Receipts[] = [];
+  receipts: Recipes[] = [];
+  filteredReceipts: Recipes[] = [];
 
   async ngOnInit(): Promise<void> {
     this.receipts = await this.getReceptes(); // Crida a la firebase per obtenir receptes.
@@ -46,14 +46,14 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  async getReceptes(): Promise<Receipts[]> { // Ara tenim receptes de prova
+  async getReceptes(): Promise<Recipes[]> { // Ara tenim receptes de prova
     const recipesRef = collection(this.db, "recipes");
-    const receptes: Receipts[] = [];
+    const receptes: Recipes[] = [];
     const querySnapshot = await getDocs(recipesRef);
 
     querySnapshot.forEach((doc) => {
       console.log(`${doc.id} => ${doc.data()}`);
-      const recepta = doc.data() as Receipts;
+      const recepta = doc.data() as Recipes;
       //Part de filtratge
       if (recepta.name && recepta.name.toLowerCase().indexOf(this.filterName.toLowerCase()) !== -1) {
         if (this.filterDuration === 0 || (recepta.time && (recepta.time.includes('minuts') && +parseInt(recepta.time)/60 <= this.filterDuration || recepta.time.includes('hores') && +parseInt(recepta.time) <= this.filterDuration))) {
@@ -63,21 +63,21 @@ export class HomeComponent implements OnInit {
         }
       }
     });
-    return receptes as Receipts[];
+    return receptes as Recipes[];
   }
 
   goToProfile(): void { // Metode per anar al perfil.
     this.router.navigate(['/profile']);
   }
 
-  goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
+  goToReceipt(receipt: Recipes): void { // Metode per anar al perfil.
     this.showRecipe = true;
-    this.currentReceipt = receipt;
+    this.currentRecipe = receipt;
   }
 
   newRecipe() { // Metode per obrir el formulari de recepta
     this.recipeForm = true;
-    this.formMode = 'new'; 
+    this.formMode = 'edit'; 
   }
 
   closeForm() { 

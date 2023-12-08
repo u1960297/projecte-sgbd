@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Receipts } from '../models/receipts.model';
+import { Recipes } from '../models/recipes.model';
 import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
 import { DocumentReference, addDoc, collection, getDoc, getDocs } from '@angular/fire/firestore';
 import { Ingredients } from '../models/ingredients.model';
@@ -16,11 +16,11 @@ import { PhotosService } from 'src/app/services/photos.service';
 
 export class FormRecipeComponent implements OnInit {
   @Input() mode: string = ''; // 'new' o 'edit'
-  @Input() recipeId: string = '';
+  @Input() recipeId: string = '3';
   @Output() addedSuccessfully = new EventEmitter<boolean>();
 
   recipeForm!: FormGroup;
-  recipe: Receipts = new Receipts();
+  recipe: Recipes = new Recipes();
   ingredients: Ingredients[] = [];
 
   dificultats: any[] = ['Fàcil', 'Mitjana','Difícil'];

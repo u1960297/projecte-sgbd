@@ -1,21 +1,21 @@
 <div style="display: flex; justify-content: flex-end;">
     <!-- Altres elements -->
-    <p-button *ngIf="authService.isLoggedIn()" label="Profile" icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+    <p-button *ngIf="authService.isLoggedIn()" label="Profile"  icon="pi pi-user" (onClick)="goToProfile()"></p-button>
     <p-button *ngIf="!authService.isLoggedIn()" label="Inicia sessió" icon="pi pi-sign-in" (onClick)="goToLogin()"></p-button>
     <p-button *ngIf="authService.isLoggedIn()" label="Logout" icon="pi pi-plus" (onClick)="logout()"></p-button>
 </div>
 
 <br>
 
-<p-panel header="Receipts">
-    <div style="display: flex; justify-content: flex-start;">
+<p-panel header="Recipes">
+    <div style="display: flex; justify-content: space-between;">
         <p-button label="Filtres" (onClick)="goToFilters()" [raised]="true"></p-button>
         <p-button *ngIf="authService.isLoggedIn()" label="New recipe" (onClick)="newRecipe()" icon="pi pi-plus" [raised]="true"></p-button>
     </div>
 
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
         <p-card *ngFor="let receipt of filteredReceipts" (dblclick)="goToReceipt(receipt)">
-            <app-receipt [receipt]="receipt"></app-receipt>
+            <app-recipe [recipe]="receipt"></app-recipe>
         </p-card>
     </div> 
 </p-panel>
@@ -25,9 +25,9 @@
     <app-form-recipe [mode]="formMode" (addedSuccessfully)="closeForm()"></app-form-recipe>
 </p-dialog>
 
-<p-dialog header="{{currentReceipt.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
+<p-dialog header="{{currentRecipe.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
         [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
-    <app-receipt [receipt]="currentReceipt"></app-receipt>
+    <app-recipe [recipe]="currentRecipe"></app-recipe>
 </p-dialog>
 
 <p-dialog header="Filtres" [(visible)]="showFilters" [style]="{width: '50vw'}" 
