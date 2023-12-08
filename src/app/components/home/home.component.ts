@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
   constructor(private router: Router, public authService: AuthService) {}
 
   private db = getFirestore();
+  logo: string = '/assets/images/easychef.png';
   showRecipe: boolean = false;
   currentRecipe: Recipes = new Recipes;
   showFilters: boolean = false;
