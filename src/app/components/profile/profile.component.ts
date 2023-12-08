@@ -20,7 +20,7 @@ export class ProfileComponent {
   showRecipe: boolean = false;
   currentReceipt: Receipts = new Receipts;
 
-  constructor(private auth: Auth, private authService: AuthService, private router: Router, private PhotosService: PhotosService) {
+  constructor(private auth: Auth, public authService: AuthService, private router: Router, private PhotosService: PhotosService) {
     // Escoltem els canvis d'estat d'autenticació de l'usuari
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -119,5 +119,14 @@ export class ProfileComponent {
   goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
     this.showRecipe = true;
     this.currentReceipt = receipt;
+  }
+
+  goToHome(): void { // Metode per anar al perfil.
+    this.router.navigate(['/home']);
+  }
+
+  logout(): void { // Metode per fer logout.
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
