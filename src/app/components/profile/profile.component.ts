@@ -7,7 +7,7 @@ import { PhotosService } from 'src/app/services/photos.service'; // adjust the p
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { Auth, getAuth } from '@angular/fire/auth';
 import { collection, getDocs } from '@angular/fire/firestore';
-import { Receipts } from '../../models/receipts.model';
+import { Recipes } from '../../models/recipes.model';
 
 @Component({
   selector: 'app-profile',
@@ -16,9 +16,9 @@ import { Receipts } from '../../models/receipts.model';
 })
 export class ProfileComponent {
   userData: UserData | null = null;
-  receipts: Receipts[] = [];
+  receipts: Recipes[] = [];
   showRecipe: boolean = false;
-  currentReceipt: Receipts = new Receipts;
+  currentReceipt: Recipes = new Recipes;
 
   constructor(private auth: Auth, public authService: AuthService, private router: Router, private PhotosService: PhotosService) {
     // Escoltem els canvis d'estat d'autenticació de l'usuari
@@ -97,7 +97,7 @@ export class ProfileComponent {
     }
   }
 
-  async getUserRecipes(uid: string): Promise<Receipts[]> {
+  async getUserRecipes(uid: string): Promise<Recipes[]> {
     //veure l'usuari actual
     console.log(uid);
 
@@ -105,18 +105,18 @@ export class ProfileComponent {
     const recipesRef = collection(db, `users/${uid}/recipes`);
     const querySnapshot = await getDocs(recipesRef);
 
-    const receipts: Receipts[] = [];
+    const receipts: Recipes[] = [];
 
     querySnapshot.forEach((doc) => {
       console.log(`${doc.id} => ${doc.data()}`);
-      const recepta = doc.data() as Receipts;
+      const recepta = doc.data() as Recipes;
       receipts.push(recepta);
     });
 
     return receipts;
   }
 
-  goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
+  goToReceipt(receipt: Recipes): void { // Metode per anar al perfil.
     this.showRecipe = true;
     this.currentReceipt = receipt;
   }
