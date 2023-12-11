@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { PhotosService } from 'src/app/services/photos.service'; // adjust the path as needed
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { Auth, getAuth } from '@angular/fire/auth';
+import { collection, getDocs } from '@angular/fire/firestore';
+import { Receipts } from '../../models/receipts.model';
 
 @Component({
   selector: 'app-profile',
@@ -14,8 +16,11 @@ import { Auth, getAuth } from '@angular/fire/auth';
 })
 export class ProfileComponent {
   userData: UserData | null = null;
+  receipts: Receipts[] = [];
+  showRecipe: boolean = false;
+  currentReceipt: Receipts = new Receipts;
 
-  constructor(private auth: Auth, private authService: AuthService, private router: Router, private PhotosService: PhotosService) {
+  constructor(private auth: Auth, public authService: AuthService, private router: Router, private PhotosService: PhotosService) {
     // Escoltem els canvis d'estat d'autenticació de l'usuari
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -24,6 +29,7 @@ export class ProfileComponent {
         if (userAuth) {
           // Si tenim les dades d'autenticació de l'usuari, obtenim les seves dades de Firestore
           this.userData = await this.authService.fetchUserDataFromFirestore(user.uid);
+          this.receipts = await this.getUserRecipes(user.uid);
         }
       } else {
         // Si l'usuari no està autenticat, el redirigim a la pàgina de login
@@ -89,5 +95,38 @@ export class ProfileComponent {
     } else {
       console.error('Error actualitzant el nom de l\'usuari: L\'usuari no està autenticat');
     }
+  }
+
+  async getUserRecipes(uid: string): Promise<Receipts[]> {
+    //veure l'usuari actual
+    console.log(uid);
+
+    const db = getFirestore();
+    const recipesRef = collection(db, `users/${uid}/recipes`);
+    const querySnapshot = await getDocs(recipesRef);
+
+    const receipts: Receipts[] = [];
+
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+      const recepta = doc.data() as Receipts;
+      receipts.push(recepta);
+    });
+
+    return receipts;
+  }
+
+  goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
+    this.showRecipe = true;
+    this.currentReceipt = receipt;
+  }
+
+  goToHome(): void { // Metode per anar al perfil.
+    this.router.navigate(['/home']);
+  }
+
+  logout(): void { // Metode per fer logout.
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

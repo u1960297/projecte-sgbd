@@ -21,7 +21,6 @@ export class AuthService {
         if (user.email) {
           this.updateUserData(uid, user.email);
         }
-      } else { //usuari no autenticat
       }
     });
   }
