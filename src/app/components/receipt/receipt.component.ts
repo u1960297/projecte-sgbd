@@ -8,4 +8,5 @@ import { Receipts } from 'src/app/models/receipts.model';
 })
 export class ReceiptComponent {
   @Input() receipt: Receipts = new Receipts();
+  @Input() detail: boolean = true;
 }

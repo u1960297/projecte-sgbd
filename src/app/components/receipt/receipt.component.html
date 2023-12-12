@@ -1,5 +1,5 @@
 <img class="recipe" [src]="receipt.image" alt="{{receipt.name}}">
-<p>{{ receipt.name }}</p>
+<p *ngIf="!detail">{{ receipt.name }}</p>
 <hr>
 <p>
     <svg class="svg-icon" viewBox="0 0 20 20">
@@ -7,7 +7,7 @@
     </svg>
     {{ receipt.time }}
 </p>
-<p> 
+<p>
     <svg class="svg-icon" viewBox="0 0 20 20">
         <path d="M4.68,13.716v-0.169H4.554C4.592,13.605,4.639,13.658,4.68,13.716z M11.931,6.465
         c-0.307-0.087-0.623,0.106-0.706,0.432l-1.389,5.484c-0.901,0.084-1.609,0.833-1.609,1.757c0,0.979,0.793,1.773,1.773,1.773
@@ -30,3 +30,14 @@
     </svg>
     {{ receipt.description }}
 </p>
+
+<div *ngIf="detail" class="ingredients">
+    <h3>Ingredients</h3>
+    <ul>
+        <li *ngFor="let ingredient of receipt.ingredients">
+            <span>{{ ingredient.name }}</span>
+        </li>
+    </ul>
+</div>
+
+<p-button *ngIf="detail">Editar</p-button>
