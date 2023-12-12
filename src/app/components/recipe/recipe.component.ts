@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Recipes } from 'src/app/models/recipes.model';
 
 @Component({
@@ -9,6 +9,7 @@ import { Recipes } from 'src/app/models/recipes.model';
 export class RecipeComponent {
   @Input() recipe: Recipes = new Recipes();
   @Input() detail: boolean = false;
+  @Output() closeDetail = new EventEmitter<boolean>();
 
   recipeForm: boolean = false;
   formMode: string = 'edit';
@@ -20,5 +21,6 @@ export class RecipeComponent {
 
   closeForm(): void {
     this.recipeForm = false;
+    this.closeDetail.emit(true);
   }
 }

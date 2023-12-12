@@ -82,14 +82,22 @@ export class FormRecipeComponent implements OnInit {
   
         // Obté els noms dels ingredients mitjançant les referències
         const ingredientPromises = recipeData['ingredients'].map(async (ingredientRef: DocumentReference) => {
-          const ingredientDoc = await getDoc(ingredientRef);
-          if (ingredientDoc.exists()) {
-            return ingredientDoc.data();
-          } else {
+          try {
+            // Obtenir l'ingredient de la col·lecció "ingredients"
+            const ingredientDoc = await getDoc(ingredientRef);
+        
+            if (ingredientDoc.exists()) {
+              return ingredientDoc.data();
+            } else {
+              console.error("Error: Ingredient no trobat en la col·lecció 'ingredients'", ingredientRef.id);
+              return null;
+            }
+          } catch (error) {
+            console.error("Error a l'obtenir l'ingredient", error);
             return null;
           }
         });
-  
+        
         // Espera que totes les promeses s'acabin
         const ingredientsData = await Promise.all(ingredientPromises);
         console.log(ingredientsData);
@@ -196,23 +204,38 @@ export class FormRecipeComponent implements OnInit {
         description: formData.description,
         difficulty: formData.dificultatTriada,
         ingredients: formData.ingredients,
-        name: formData.name,
         time: formData.time,
         image: this.selectedImage ? '' : this.imageDownloadURL // Utilitza la nova imatge o la imatge actual
       };
   
       const db = getFirestore();
-      const id: string = String(this.recipeEdit.id);
-      const recipeRef = doc(db, 'recipes', id);
   
-      // Actualitza la recepta amb les noves dades
-      updateDoc(recipeRef, updatedRecipe)
-        .then(() => {
-          console.log('Recipe updated successfully.');
-          this.addedSuccessfully.emit(true);
+      // Modifica la consulta per obtenir la recepta pel camp "name" en lloc de l'ID
+      const recipesCollection = collection(db, 'recipes');
+      const crida = query(recipesCollection, where('name', '==', formData.name));
+      
+      getDocs(crida)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            // Obtenir la primera recepta trobada (pots gestionar múltiples resultats si és necessari)
+            const recipeDoc = querySnapshot.docs[0];
+            const recipeRef = doc(db, 'recipes', recipeDoc.id);
+  
+            // Actualitza la recepta amb les noves dades
+            updateDoc(recipeRef, updatedRecipe)
+              .then(() => {
+                console.log('Recipe updated successfully.');
+                this.addedSuccessfully.emit(true);
+              })
+              .catch((error) => {
+                console.error('Error updating recipe:', error);
+              });
+          } else {
+            console.log("No s'ha trobat cap recepta amb aquest nom.");
+          }
         })
         .catch((error) => {
-          console.error('Error updating recipe:', error);
+          console.error("Error a l'obtenir la recepta", error);
         });
     } else {
       console.log('Invalid form. Please fill in all required fields.');

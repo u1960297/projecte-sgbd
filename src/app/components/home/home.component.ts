@@ -72,6 +72,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToReceipt(receipt: Recipes): void { // Metode per anar al perfil.
+    this.recipeForm = false;
     this.showRecipe = true;
     this.currentRecipe = receipt;
   }
@@ -79,6 +80,14 @@ export class HomeComponent implements OnInit {
   newRecipe() { // Metode per obrir el formulari de recepta
     this.recipeForm = true;
     this.formMode = 'new'; 
+  }
+
+  closeDetail() {
+    this.showRecipe = false;
+    this.getReceptes().then((receptes) => {
+      this.receipts = receptes;
+      this.filteredReceipts = receptes;
+    });
   }
 
   closeForm() { 
