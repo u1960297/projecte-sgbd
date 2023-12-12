@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Recipes } from '../models/recipes.model';
-import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
-import { DocumentReference, addDoc, collection, getDoc, getDocs } from '@angular/fire/firestore';
+import { doc, getFirestore, query, updateDoc } from 'firebase/firestore';
+import { DocumentReference, addDoc, collection, getDoc, getDocs, where } from '@angular/fire/firestore';
 import { Ingredients } from '../models/ingredients.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { PhotosService } from 'src/app/services/photos.service';
@@ -16,7 +16,7 @@ import { PhotosService } from 'src/app/services/photos.service';
 
 export class FormRecipeComponent implements OnInit {
   @Input() mode: string = ''; // 'new' o 'edit'
-  @Input() recipeId: string = '';
+  @Input() recipeEdit: Recipes = new Recipes;
   @Output() addedSuccessfully = new EventEmitter<boolean>();
 
   recipeForm!: FormGroup;
@@ -36,10 +36,10 @@ export class FormRecipeComponent implements OnInit {
     this.getIngredients();
     this.dificultatTriada = this.dificultats[0];
 
-    if (this.mode === 'new' && this.recipeId === "") this.newForm();
+    if (this.mode === 'new' && this.recipeEdit === undefined) this.newForm();
     else {
       this.newForm();
-      this.patchValuesForm(this.recipeId);
+      this.patchValuesForm();
     }
   }
 
@@ -63,52 +63,59 @@ export class FormRecipeComponent implements OnInit {
     }
   }
 
-  async getRecipeById(recipeId: string) {
+  async getRecipeByName(recipeName: string) {
+    console.log(recipeName);
     const db = getFirestore();
-      const recipeRef = doc(db, 'recipes', recipeId);
     
-      try {
-        const recipeSnapshot = await getDoc(recipeRef);
-
-        if (recipeSnapshot.exists()) {
-          const recipeData = recipeSnapshot.data();
-    
-          // Obté els noms dels ingredients mitjançant les referències
-          const ingredientPromises = recipeData['ingredients'].map(async (ingredientRef: DocumentReference) => {
-            const ingredientDoc = await getDoc(ingredientRef);
-            if (ingredientDoc.exists()) {
-              return ingredientDoc.data();
-            } else {
-              return null;
-            }
-          });
-          
-          // Espera que totes les promeses s'acabin
-          const ingredientsData = await Promise.all(ingredientPromises);
-          console.log(ingredientsData);
-    
-          console.log('Ingredients from Firestore:', recipeData['ingredients']);
-          console.log('Processed Ingredients Data:', ingredientsData);
-
-          // Actualitza el formulari amb les dades dels ingredients
-          this.recipeForm.patchValue({
-            name: recipeData['name'],
-            description: recipeData['description'],
-            ingredients: ingredientsData, // Utilitza les dades dels ingredients en lloc de les referències
-            dificultatTriada: recipeData['difficulty'],
-            time: recipeData['time'],
-            image: recipeData['image']
-          });
-          
-          this.imageDownloadURL = this.recipeForm.value['image'];
-          console.log(this.recipeForm.value);
-          console.log(this.imageDownloadURL);
-        } else {
-          console.log("No s'ha trobat cap recepta amb aquest ID.");
-        }
-      } catch (error) {
-        console.error("Error a l'obtenir la recepta", error);
+    try {
+      // Crea una consulta per obtenir la recepta amb el nom proporcionat
+      const recipesCollection = collection(db, 'recipes');
+      const crida = query(recipesCollection, where('name', '==', recipeName));
+      
+      const querySnapshot = await getDocs(crida);
+  
+      if (!querySnapshot.empty) {
+        // Si hi ha resultats, agafa la primera recepta (podries gestionar múltiples resultats si és necessari)
+        const recipeDoc = querySnapshot.docs[0];
+        const recipeData = recipeDoc.data();
+        console.log(recipeData);
+  
+        // Obté els noms dels ingredients mitjançant les referències
+        const ingredientPromises = recipeData['ingredients'].map(async (ingredientRef: DocumentReference) => {
+          const ingredientDoc = await getDoc(ingredientRef);
+          if (ingredientDoc.exists()) {
+            return ingredientDoc.data();
+          } else {
+            return null;
+          }
+        });
+  
+        // Espera que totes les promeses s'acabin
+        const ingredientsData = await Promise.all(ingredientPromises);
+        console.log(ingredientsData);
+  
+        console.log('Ingredients from Firestore:', recipeData['ingredients']);
+        console.log('Processed Ingredients Data:', ingredientsData);
+  
+        // Actualitza el formulari amb les dades dels ingredients
+        this.recipeForm.patchValue({
+          name: recipeData['name'],
+          description: recipeData['description'],
+          ingredients: ingredientsData, // Utilitza les dades dels ingredients en lloc de les referències
+          dificultatTriada: recipeData['difficulty'],
+          time: recipeData['time'],
+          image: recipeData['image']
+        });
+  
+        this.imageDownloadURL = this.recipeForm.value['image'];
+        console.log(this.recipeForm.value);
+        console.log(this.imageDownloadURL);
+      } else {
+        console.log("No s'ha trobat cap recepta amb aquest nom.");
       }
+    } catch (error) {
+      console.error("Error a l'obtenir la recepta", error);
+    }
   }
 
   newForm() {
@@ -122,9 +129,11 @@ export class FormRecipeComponent implements OnInit {
     });
   }
 
-  patchValuesForm(recipeId: string) {
-    if (recipeId !== "") {
-      this.getRecipeById(recipeId);
+  patchValuesForm() {
+    if (this.recipeEdit !== undefined) {
+      const name = String(this.recipeEdit.name);
+      console.log(name);
+      this.getRecipeByName(name);
     }
   }
 
@@ -193,7 +202,8 @@ export class FormRecipeComponent implements OnInit {
       };
   
       const db = getFirestore();
-      const recipeRef = doc(db, 'recipes', this.recipeId);
+      const id: string = String(this.recipeEdit.id);
+      const recipeRef = doc(db, 'recipes', id);
   
       // Actualitza la recepta amb les noves dades
       updateDoc(recipeRef, updatedRecipe)

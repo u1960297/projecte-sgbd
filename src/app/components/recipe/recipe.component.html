@@ -40,4 +40,9 @@
     </ul>
 </div>
 <br>
-<p-button *ngIf="detail">Editar</p-button>
+<p-button *ngIf="detail" (onClick)="openForm()">Editar</p-button>
+
+<p-dialog *ngIf="recipeForm" header="Formulari de recepta" [(visible)]="recipeForm" [style]="{width: '50vw'}" 
+        [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+    <app-form-recipe *ngIf="recipe" [recipeEdit]="recipe" [mode]="formMode" (addedSuccessfully)="closeForm()"></app-form-recipe>
+</p-dialog>
