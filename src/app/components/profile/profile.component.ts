@@ -15,6 +15,7 @@ import { Recipes } from '../../models/recipes.model';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
+  appLogo: string = '/assets/images/easychef.png';
   userData: UserData | null = null;
   receipts: Recipes[] = [];
   showRecipe: boolean = false;

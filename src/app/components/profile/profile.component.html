@@ -1,7 +1,9 @@
-<div style="display: flex; justify-content: flex-end;">
-    <!-- Altres elements -->
-    <p-button *ngIf="authService.isLoggedIn()" label="Home" icon="pi pi-user" (onClick)="goToHome()"></p-button>
-    <p-button *ngIf="authService.isLoggedIn()" label="Logout" icon="pi pi-plus" (onClick)="logout()"></p-button>
+<div class="header">
+    <img src=" {{appLogo}} " class="logo"> 
+    <div class="buttons">
+        <p-button *ngIf="authService.isLoggedIn()" label="Home" icon="pi pi-user" (onClick)="goToHome()"></p-button>
+        <p-button *ngIf="authService.isLoggedIn()" label="Logout" icon="pi pi-plus" (onClick)="logout()"></p-button>
+    </div>
 </div>
 
 <div class="profile-container" *ngIf="userData">
@@ -12,10 +14,13 @@
     <!-- Add a form for editing the user's name -->
     <form (submit)="updateUserName(newName.value)">
         <input type="text" #newName placeholder="New name" required>
-        <button type="submit">Update Name</button>
+        <br>
+        <br>
+        <p-button type="submit">Update Name</p-button>
+        <br>
     </form>
 </div>
-
+<br>
 <p-panel header="Receipts">
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
         <p-card *ngFor="let receipt of receipts" (dblclick)="goToReceipt(receipt)">

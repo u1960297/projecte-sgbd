@@ -8,4 +8,5 @@ import { Recipes } from 'src/app/models/recipes.model';
 })
 export class RecipeComponent {
   @Input() recipe: Recipes = new Recipes();
+  @Input() detail: boolean = false;
 }
