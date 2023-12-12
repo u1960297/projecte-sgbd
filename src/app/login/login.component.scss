@@ -1,3 +1,7 @@
+.container{
+  background-color: #f3f3f3;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -31,6 +35,7 @@
   .button-container {
     display: flex;
     justify-content: space-between;
+    margin-top: 15px;
   }
   
   .google-login {
@@ -45,4 +50,28 @@
     width: 100%;
     height: 40px;
     font-size: 16px;
+  }
+
+  #email, #password {
+    border-radius: 30px;
+    border: 1px solid rgba($color: #000000, $alpha: 0.2);
+    padding: 15px;
+    margin: 5px 0;
+  }
+
+  .svg-icon {
+    height: 25px;
+    margin-bottom: -5px;
+    margin-left: 10px;
+    margin-right: 5px;
+  }
+
+  .logo {
+    width: 150px;
+    margin: 0 auto;
+    padding-top: 20px;
+  }
+
+  p-header {
+    text-align: center;
   }
