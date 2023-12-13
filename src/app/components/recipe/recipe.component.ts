@@ -28,7 +28,6 @@ export class RecipeComponent {
   }
 
   isOwnRecipe(): boolean {
-    console.log("id de la recepta " + this.recipe.id);
     return this.authService.getCurrentUser()?.uid === this.recipe.authorid;
   }
 
