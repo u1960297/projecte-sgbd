@@ -3,7 +3,7 @@
         <img class="recipe" [src]="receipt.image" alt="{{receipt.name}}">
     </div>
     <div class="recipe-card-content">
-        <p>{{ receipt.name }}</p>
+        <p *ngIf="!detail">{{ receipt.name }}</p>
         <hr>
         <p>
             <svg class="svg-icon" viewBox="0 0 20 20">
@@ -34,5 +34,15 @@
             </svg>
             {{ receipt.description }}
         </p>
+        <div *ngIf="detail" class="ingredients">
+            <h3>Ingredients</h3>
+            <ul>
+                <li *ngFor="let ingredient of receipt.ingredients">
+                    <span>{{ ingredient.name }}</span>
+                </li>
+            </ul>
+        </div>
+        
+        <p-button *ngIf="detail">Editar</p-button>
     </div>
 </div>
