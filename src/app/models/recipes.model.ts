@@ -4,6 +4,7 @@ export class Recipes {
     id?: number;
     name?: string;
     description?: string;
+    steps?: string;
     ingredients?: Ingredients[];
     difficulty?: string;
     time?: string;

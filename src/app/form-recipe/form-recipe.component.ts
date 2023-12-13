@@ -92,6 +92,7 @@ export class FormRecipeComponent implements OnInit {
         this.recipeForm.patchValue({
           name: recipeData['name'],
           description: recipeData['description'],
+          steps: recipeData['steps'],
           ingredients: null, // Utilitza les dades dels ingredients en lloc de les referències
           dificultatTriada: recipeData['difficulty'],
           time: recipeData['time'],
@@ -114,6 +115,7 @@ export class FormRecipeComponent implements OnInit {
     this.recipeForm = new FormGroup({
       name: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
+      steps: new FormControl(null, Validators.required),
       ingredients: new FormControl(null, Validators.required),
       dificultatTriada: new FormControl(null, Validators.required),
       time: new FormControl(null, Validators.required),
@@ -139,6 +141,7 @@ export class FormRecipeComponent implements OnInit {
 
     console.log(this.recipeForm.value["name"]);
     console.log(this.recipeForm.value["description"]);
+    console.log(this.recipeForm.value["steps"]);
     console.log(this.recipeForm.value["ingredients"]);
     console.log(this.recipeForm.value["dificultatTriada"]);
     console.log(this.recipeForm.value["time"]);
@@ -150,6 +153,7 @@ export class FormRecipeComponent implements OnInit {
         const formData = this.recipeForm.value;
         const newRecipe = {
           description: formData.description,
+          steps: formData.steps,
           difficulty: formData.dificultatTriada,
           ingredients: formData.ingredients,
           name: formData.name,
@@ -205,6 +209,7 @@ export class FormRecipeComponent implements OnInit {
       // Crea l'objecte amb les dades actualitzades
       const updatedRecipe = {
         description: formData.description,
+        steps: formData.steps,
         difficulty: formData.dificultatTriada,
         ingredients: formData.ingredients,
         time: formData.time,

@@ -20,6 +20,9 @@
       <p-radioButton [inputId]="dificultat" [value]="dificultat" formControlName="dificultatTriada"></p-radioButton>
       <label [for]="dificultat" class="ml-2">{{ dificultat }}</label>
     </div>
+
+    <label for="steps" class="titol">Passos:</label>
+    <textarea rows="5" cols="30" pInputTextarea formControlName="steps"></textarea>
   
     <label for="time" class="titol">Temps:</label>
     <input type="text" pInputText formControlName="time">

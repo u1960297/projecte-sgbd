@@ -39,7 +39,14 @@
         </li>
     </ul>
 </div>
+
+<div *ngIf="detail" class="steps">
+    <h3>Passos</h3>
+    <ul><li><p>{{ recipe.steps }}</p></li></ul>
+</div>
+
 <br>
+
 <p-button *ngIf="detail" (onClick)="openForm()">Editar</p-button>
 
 <p-dialog *ngIf="recipeForm" header="Formulari de recepta" [(visible)]="recipeForm" [style]="{width: '50vw'}" 
