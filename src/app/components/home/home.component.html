@@ -41,7 +41,8 @@
         </div>
         <div class="filtreDurada">
             <p>Durada</p>
-            <input pInputText type="number" [(ngModel)]="filterDuration" />
+            <input pInputText type="number" class="numberTimeSelector" [(ngModel)]="filterDuration" />
+            <p-dropdown [options]="times" [(ngModel)]="selectedTime" optionLabel="name" optionValue="name" [showClear]="true" placeholder="Select a unit of time"></p-dropdown>
         </div>
         <div class="filtreDificultat">
             <p>Dificultat</p>
