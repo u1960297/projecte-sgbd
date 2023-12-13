@@ -110,7 +110,7 @@ export class ProfileComponent {
 
     querySnapshot.forEach((doc) => {
       console.log(`${doc.id} => ${doc.data()}`);
-      const recepta = doc.data() as Recipes;
+      const recepta = { id: doc.id, ...doc.data() } as Recipes;
       receipts.push(recepta);
     });
 

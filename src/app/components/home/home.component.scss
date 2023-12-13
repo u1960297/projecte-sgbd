@@ -5,8 +5,11 @@
 }
 
 .logo {
-    height: 100px;
-}
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
 
 :host ::ng-deep .buttons {
     display: flex;

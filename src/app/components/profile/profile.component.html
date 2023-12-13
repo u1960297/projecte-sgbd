@@ -1,25 +1,28 @@
 <div class="header">
-    <img src=" {{appLogo}} " class="logo"> 
+<img src=" {{appLogo}} " class="logo" (click)="goToHome()"> 
     <div class="buttons">
-        <p-button *ngIf="authService.isLoggedIn()" label="Home" icon="pi pi-user" (onClick)="goToHome()"></p-button>
         <p-button *ngIf="authService.isLoggedIn()" label="Logout" icon="pi pi-plus" (onClick)="logout()"></p-button>
     </div>
 </div>
 
 <div class="profile-container" *ngIf="userData">
-    <img [src]="userData.image" class="profile-image" alt="Profile Image">
-    <h2 class="profile-name">Welcome, {{ userData.name }}</h2>
-    <input type="file" (change)="uploadProfileImage($event)" class="upload-button">
-
-    <!-- Add a form for editing the user's name -->
-    <form (submit)="updateUserName(newName.value)">
-        <input type="text" #newName placeholder="New name" required>
-        <br>
-        <br>
-        <p-button type="submit">Update Name</p-button>
-        <br>
-    </form>
+    <div class="profile-info">
+        <img [src]="userData.image" class="profile-image" alt="Profile Image">
+        <h2 class="profile-name">Welcome, {{ userData.name }}</h2>
+    </div>
+    <div class="update-info">
+        <p>Actualitza el teu usuari</p>
+        <form (submit)="updateUserName(newName.value)">
+            <input type="text" #newName placeholder="New name" required>
+            <p-button class="updateName" type="submit">Actualitza nom</p-button>
+        </form>
+        <p>Actualitza la foto de perfil</p>
+        <input type="file" (change)="uploadProfileImage($event)" class="upload-button">
+    </div>
 </div>
+
+<!-- Receptes pròpies -->
+
 <br>
 <p-panel header="Receipts">
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">

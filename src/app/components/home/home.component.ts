@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
 
     querySnapshot.forEach((doc) => {
       console.log(`${doc.id} => ${doc.data()}`);
-      const recepta = doc.data() as Recipes;
+      const recepta = { id: doc.id, ...doc.data() } as Recipes;
       //Part de filtratge
       if (recepta.name && recepta.name.toLowerCase().indexOf(this.filterName.toLowerCase()) !== -1) {
         if (this.filterDuration === 0 || (recepta.time && (recepta.time.includes('minuts') && +parseInt(recepta.time)/60 <= this.filterDuration || recepta.time.includes('hores') && +parseInt(recepta.time) <= this.filterDuration))) {
@@ -121,5 +121,9 @@ export class HomeComponent implements OnInit {
     this.showFilters = false;
     this.filterName = '';
     this.selectedDifficulty = '';
+  }
+
+  goToHome(): void {
+    this.router.navigate(['/home']);
   }
 }
