@@ -3,7 +3,7 @@
         <img class="recipe" [src]="receipt.image" alt="{{receipt.name}}">
     </div>
     <div class="recipe-card-content">
-        <p *ngIf="!detail">{{ receipt.name }}</p>
+        <p *ngIf="!detail" class="receipt-name" >{{ receipt.name }}</p>
         <hr>
         <p>
             <svg class="svg-icon" viewBox="0 0 20 20">

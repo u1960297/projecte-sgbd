@@ -12,18 +12,13 @@
     color: white !important; 
 } 
 :host ::ng-deep .p-panel .p-panel-content { 
-    border-radius: 10px;
-    background: white !important; 
-    color: black !important; 
     font-weight: 500; 
-    font-size: 18px; 
+    font-size: 18px;
 } 
 
 :host ::ng-deep .p-card > * {
-    width: 200px;
     height: 400px;
     padding: 1rem;
-    margin: 1rem;
 }
 
 .recipe {
