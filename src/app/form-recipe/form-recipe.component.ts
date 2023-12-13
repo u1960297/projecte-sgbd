@@ -7,6 +7,8 @@ import { DocumentReference, addDoc, collection, getDoc, getDocs, where } from '@
 import { Ingredients } from '../models/ingredients.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { PhotosService } from 'src/app/services/photos.service';
+import { AuthService } from '../services/auth.service';
+import { setDoc } from 'firebase/firestore';
 
 @Component({
   selector: 'app-form-recipe',
@@ -17,11 +19,17 @@ import { PhotosService } from 'src/app/services/photos.service';
 export class FormRecipeComponent implements OnInit {
   @Input() mode: string = ''; // 'new' o 'edit'
   @Input() recipeEdit: Recipes = new Recipes;
+  @Input() authService: AuthService;
   @Output() addedSuccessfully = new EventEmitter<boolean>();
+
+  constructor(private router: Router, private PhotosService: PhotosService, authService: AuthService) {
+    this.authService = authService;
+  }
 
   recipeForm!: FormGroup;
   recipe: Recipes = new Recipes();
   ingredients: Ingredients[] = [];
+  
 
   dificultats: any[] = ['Fàcil', 'Mitjana','Difícil'];
   dificultatTriada: any = null;
@@ -29,7 +37,6 @@ export class FormRecipeComponent implements OnInit {
   selectedImage: File | null = null;
   imageDownloadURL: string = '';
 
-  constructor(private router: Router, private PhotosService: PhotosService) {}
 
   ngOnInit(): void { 
     console.log(this.mode);
@@ -75,45 +82,22 @@ export class FormRecipeComponent implements OnInit {
       const querySnapshot = await getDocs(crida);
   
       if (!querySnapshot.empty) {
-        // Si hi ha resultats, agafa la primera recepta (podries gestionar múltiples resultats si és necessari)
+        // Si hi ha resultats, agafa la primera recepta
         const recipeDoc = querySnapshot.docs[0];
         const recipeData = recipeDoc.data();
         console.log(recipeData);
-  
-        // Obté els noms dels ingredients mitjançant les referències
-        const ingredientPromises = recipeData['ingredients'].map(async (ingredientRef: DocumentReference) => {
-          try {
-            // Obtenir l'ingredient de la col·lecció "ingredients"
-            const ingredientDoc = await getDoc(ingredientRef);
-        
-            if (ingredientDoc.exists()) {
-              return ingredientDoc.data();
-            } else {
-              console.error("Error: Ingredient no trobat en la col·lecció 'ingredients'", ingredientRef.id);
-              return null;
-            }
-          } catch (error) {
-            console.error("Error a l'obtenir l'ingredient", error);
-            return null;
-          }
-        });
-        
-        // Espera que totes les promeses s'acabin
-        const ingredientsData = await Promise.all(ingredientPromises);
-        console.log(ingredientsData);
-  
-        console.log('Ingredients from Firestore:', recipeData['ingredients']);
-        console.log('Processed Ingredients Data:', ingredientsData);
+
   
         // Actualitza el formulari amb les dades dels ingredients
         this.recipeForm.patchValue({
           name: recipeData['name'],
           description: recipeData['description'],
-          ingredients: ingredientsData, // Utilitza les dades dels ingredients en lloc de les referències
+          ingredients: null, // Utilitza les dades dels ingredients en lloc de les referències
           dificultatTriada: recipeData['difficulty'],
           time: recipeData['time'],
           image: recipeData['image']
         });
+
   
         this.imageDownloadURL = this.recipeForm.value['image'];
         console.log(this.recipeForm.value);
@@ -161,36 +145,55 @@ export class FormRecipeComponent implements OnInit {
     console.log(this.selectedImage);
 
     if (this.recipeForm.valid && this.selectedImage) {
-      const formData = this.recipeForm.value;
-      const newRecipe = {
-        description: formData.description,
-        difficulty: formData.dificultatTriada,
-        ingredients: formData.ingredients,
-        name: formData.name,
-        time: formData.time,
-        image: ''
-      };
-      const recipeName = this.recipeForm.value["name"];
-      const filePath = `/images/recipes/${recipeName}`;
-
-      // Pugem la imatge al servidor
-      this.PhotosService.uploadImage(filePath, this.selectedImage).then((url: string) => {
-        // Actualitzem la imatge de la recepta a la nostra aplicació
-          newRecipe.image = url;
-
-          const db = getFirestore();
-          const recipesCollection = collection(db, 'recipes');
+      const user = this.authService.getCurrentUser();
+      if(user){
+        const formData = this.recipeForm.value;
+        const newRecipe = {
+          description: formData.description,
+          difficulty: formData.dificultatTriada,
+          ingredients: formData.ingredients,
+          name: formData.name,
+          time: formData.time,
+          image: '',
+          authorid: user.uid
+        };
+        const recipeName = this.recipeForm.value["name"];
+        const filePath = `/images/recipes/${recipeName}`;
   
-          addDoc(recipesCollection, newRecipe)
-            .then((docRef) => {
-              console.log('Recipe added with ID:', docRef.id);
-              this.addedSuccessfully.emit(true);
-            })
-            .catch((error) => {
-              console.error('Error adding recipe:', error);
-          });
-      });
-    } else {
+        // Pugem la imatge al servidor
+        this.PhotosService.uploadImage(filePath, this.selectedImage).then(async (url: string) => {
+          // Actualitzem la imatge de la recepta a la nostra aplicació
+            newRecipe.image = url;
+  
+            const db = getFirestore();
+            const recipesCollection = collection(db, 'recipes');
+    
+            addDoc(recipesCollection, newRecipe)
+              .then(async (docRef) => {
+                console.log('Recipe added with ID:', docRef.id);
+                //Afegir la recepta a l'usuari
+                if(user){
+                  let userData = await this.authService.fetchUserDataFromFirestore(user.uid);
+                  if(userData){
+                    const db = getFirestore();
+                    const userRef = doc(db, 'users', user.uid);
+                    const userRecipesRef = collection(userRef, 'recipes');
+                    const userRecipeRef = doc(userRecipesRef, docRef.id);
+                    await setDoc(userRecipeRef, newRecipe);
+                  }
+                }
+                this.addedSuccessfully.emit(true);
+              })
+              .catch((error) => {
+                console.error('Error adding recipe:', error);
+            });
+        });
+      }
+      else{
+        console.log("Not logged in");
+      } 
+    }
+    else {
       console.log('Invalid form. Please fill in all required fields and select an image.');
     }
   }
@@ -205,38 +208,94 @@ export class FormRecipeComponent implements OnInit {
         difficulty: formData.dificultatTriada,
         ingredients: formData.ingredients,
         time: formData.time,
-        image: this.selectedImage ? '' : this.imageDownloadURL // Utilitza la nova imatge o la imatge actual
+        image: this.imageDownloadURL
       };
-  
-      const db = getFirestore();
-  
-      // Modifica la consulta per obtenir la recepta pel camp "name" en lloc de l'ID
-      const recipesCollection = collection(db, 'recipes');
-      const crida = query(recipesCollection, where('name', '==', formData.name));
-      
-      getDocs(crida)
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            // Obtenir la primera recepta trobada (pots gestionar múltiples resultats si és necessari)
-            const recipeDoc = querySnapshot.docs[0];
-            const recipeRef = doc(db, 'recipes', recipeDoc.id);
-  
-            // Actualitza la recepta amb les noves dades
-            updateDoc(recipeRef, updatedRecipe)
-              .then(() => {
-                console.log('Recipe updated successfully.');
-                this.addedSuccessfully.emit(true);
-              })
-              .catch((error) => {
-                console.error('Error updating recipe:', error);
-              });
-          } else {
-            console.log("No s'ha trobat cap recepta amb aquest nom.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error a l'obtenir la recepta", error);
+
+      const recipeName = this.recipeForm.value["name"];
+      const filePath = `/images/recipes/${recipeName}`;
+
+      if (this.selectedImage)
+        // Pugem la imatge al servidor
+        this.PhotosService.uploadImage(filePath, this.selectedImage).then((url: string) => {
+        // Actualitzem la imatge de la recepta a la nostra aplicació
+        updatedRecipe.image = url;
+        const db = getFirestore();
+    
+        // Modifica la consulta per obtenir la recepta pel camp "name" en lloc de l'ID
+        const recipesCollection = collection(db, 'recipes');
+        const crida = query(recipesCollection, where('name', '==', formData.name));
+        
+        getDocs(crida)
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              // Obtenir la primera recepta trobada (pots gestionar múltiples resultats si és necessari)
+              const recipeDoc = querySnapshot.docs[0];
+              const recipeRef = doc(db, 'recipes', recipeDoc.id);
+    
+              // Actualitza la recepta amb les noves dades
+              updateDoc(recipeRef, updatedRecipe)
+                .then(() => {
+                  console.log('Recipe updated successfully.');
+                  let user = this.authService.getCurrentUser();
+                  if(user){
+                    let userData = this.authService.fetchUserDataFromFirestore(user.uid);
+                    const userRef = doc(db, 'users', user.uid);
+                    const userRecipesRef = collection(userRef, 'recipes');
+                    const userRecipeRef = doc(userRecipesRef, recipeDoc.id);
+                    updateDoc(userRecipeRef, updatedRecipe);
+                  }                  
+                  this.addedSuccessfully.emit(true);
+                })
+                .catch((error) => {
+                  console.error('Error updating recipe:', error);
+                });
+            } else {
+              console.log("No s'ha trobat cap recepta amb aquest nom.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error a l'obtenir la recepta", error);
+          });
         });
+      else{
+        const db = getFirestore();
+  
+        // Modifica la consulta per obtenir la recepta pel camp "name" en lloc de l'ID
+        const recipesCollection = collection(db, 'recipes');
+        const crida = query(recipesCollection, where('name', '==', formData.name));
+        
+        getDocs(crida)
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              // Obtenir la primera recepta trobada (pots gestionar múltiples resultats si és necessari)
+              const recipeDoc = querySnapshot.docs[0];
+              const recipeRef = doc(db, 'recipes', recipeDoc.id);
+    
+              // Actualitza la recepta amb les noves dades
+              updateDoc(recipeRef, updatedRecipe)
+                .then(() => {
+                  console.log('Recipe updated successfully.');
+                  let user = this.authService.getCurrentUser();
+                  if(user){
+                    let userData = this.authService.fetchUserDataFromFirestore(user.uid);
+                    const userRef = doc(db, 'users', user.uid);
+                    const userRecipesRef = collection(userRef, 'recipes');
+                    const userRecipeRef = doc(userRecipesRef, recipeDoc.id);
+                    updateDoc(userRecipeRef, updatedRecipe);
+                  }                 
+                  this.addedSuccessfully.emit(true);
+                })
+                .catch((error) => {
+                  console.error('Error updating recipe:', error);
+                });
+            } else {
+              console.log("No s'ha trobat cap recepta amb aquest nom.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error a l'obtenir la recepta", error);
+          });
+        }
     } else {
       console.log('Invalid form. Please fill in all required fields.');
     }

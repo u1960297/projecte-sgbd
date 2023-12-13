@@ -8,4 +8,5 @@ export class Recipes {
     difficulty?: string;
     time?: string;
     image?: string;
+    authorid?: string;
 }

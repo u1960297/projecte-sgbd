@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/profile']);
   }
 
-  goToReceipt(receipt: Recipes): void { // Metode per anar al perfil.
+  goToReceipt(receipt: Recipes): void {
     this.recipeForm = false;
     this.showRecipe = true;
     this.currentRecipe = receipt;

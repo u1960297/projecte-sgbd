@@ -117,12 +117,20 @@ export class ProfileComponent {
     return receipts;
   }
 
-  goToReceipt(receipt: Recipes): void { // Metode per anar al perfil.
+  goToReceipt(receipt: Recipes): void { 
     this.showRecipe = true;
     this.currentReceipt = receipt;
   }
 
-  goToHome(): void { // Metode per anar al perfil.
+  async closeDetail(){
+    this.showRecipe = false;
+    const userAuth = this.authService.getCurrentUser();
+    if(userAuth){
+      this.receipts = await this.getUserRecipes(userAuth.uid);
+    }
+  }
+
+  goToHome(): void {
     this.router.navigate(['/home']);
   }
 
