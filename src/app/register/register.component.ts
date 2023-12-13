@@ -20,6 +20,12 @@ export class RegisterPageComponent implements OnInit {
     this.authService
       .register(data)
       .then(() => this.router.navigate(['/login']))
-      .catch((e) => console.log(e.message));
+      .catch((e) => {
+        if (e.code === 'auth/email-already-in-use') {
+          alert('El correu ja està en ús.');
+        } else {
+          console.log(e.message);
+        }
+      });
   }
 }

@@ -1,4 +1,4 @@
-import {Auth, GoogleAuthProvider, User, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword,signInWithPopup, signOut, updateProfile} from '@angular/fire/auth';
+import {Auth, GoogleAuthProvider, User, fetchSignInMethodsForEmail, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword,signInWithPopup, signOut, updateProfile} from '@angular/fire/auth';
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { Injectable } from '@angular/core';
 import { LoginData } from 'src/app/models/login.model';
@@ -81,8 +81,18 @@ export class AuthService {
     return this.auth.currentUser !== null;
   }
 
-  login({ email, password }: LoginData) {
+  async login({ email, password }: LoginData) {
     return signInWithEmailAndPassword(this.auth, email, password);
+  }
+
+  async getUserByEmail(email: string): Promise<boolean> {
+    const methods = await fetchSignInMethodsForEmail(this.auth, email);
+    
+    if (methods.length === 0) { // No existeix l'usuari
+      return false;
+    } else { // Existeix l'usuari
+      return true;
+    }
   }
 
   register({ email, password }: LoginData) {
@@ -97,48 +107,4 @@ export class AuthService {
   loginWithGoogle() {
     return signInWithPopup(this.auth, new GoogleAuthProvider());
   }
-
-  // loginWithGoogle() {
-
-  //   // The implementation of how you store your user data depends on your application
-  //   const repo = new MyUserDataRepo();
-
-  //   // Get reference to the currently signed-in user
-  //   const auth = getAuth();
-  //   const prevUser = auth.currentUser;
-
-  //   // Get the data which you will want to merge. This should be done now
-  //   // while the app is still signed in as this user.
-  //   const prevUserData = repo.get(prevUser);
-
-  //   // Delete the user's data now, we will restore it if the merge fails
-  //   repo.delete(prevUser);
-
-  //   // Sign in user with the account you want to link to
-  //   signInWithCredential(auth, newCredential).then((result) => {
-  //     console.log("Sign In Success", result);
-  //     const currentUser = result.user;
-  //     const currentUserData = repo.get(currentUser);
-
-  //     // Merge prevUser and currentUser data stored in Firebase.
-  //     // Note: How you handle this is specific to your application
-  //     const mergedData = repo.merge(prevUserData, currentUserData);
-
-  //     const credential = OAuthProvider.credentialFromResult(result);
-  //     return linkWithCredential(prevUser, credential)
-  //       .then((linkResult) => {
-  //         // Sign in with the newly linked credential
-  //         const linkCredential = OAuthProvider.credentialFromResult(linkResult);
-  //         return signInWithCredential(auth, linkCredential);
-  //       })
-  //       .then((signInResult) => {
-  //         // Save the merged data to the new user
-  //         repo.set(signInResult.user, mergedData);
-  //       });
-  //     }).catch((error) => {
-  //       // If there are errors we want to undo the data merge/deletion
-  //       console.log("Sign In Error", error);
-  //       repo.set(prevUser, prevUserData);
-  //     });
-  //   }
 }

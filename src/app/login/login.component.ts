@@ -17,11 +17,17 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  login(loginData: LoginData) {
-    this.authService
-      .login(loginData)
-      .then(() => this.router.navigate(['/home']))
-      .catch((e) => console.log(e.message));
+  async login(loginData: LoginData) {
+    const userExists = await this.authService.getUserByEmail(loginData.email);
+
+    if (userExists) { // L'email ja l'estem utilitzant amb google
+      alert('Aquest correu ja està en ús. Si us plau, inicia sessió amb Google.');
+    } else { // L'email no l'utilitzem amb google
+      this.authService
+        .login(loginData)
+        .then(() => this.router.navigate(['/home']))
+        .catch((e) => console.log(e.message));
+    }
   }
 
   loginWithGoogle() {
