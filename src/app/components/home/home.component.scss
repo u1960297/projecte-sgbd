@@ -1,11 +1,84 @@
-:host {
-    ::ng-deep .p-card > * {
-        padding: 1rem;
-        margin: 1rem;
-    }
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+
+:host ::ng-deep .buttons {
+    display: flex;
+    gap: 10px; /* Espai entre botons, ajusta segons necessites */
+}
+
+:host ::ng-deep .p-panel.p-component { 
+    border-radius: 10px; 
+} 
+:host ::ng-deep .p-panel .p-panel-header { 
+    border: 2px solid;
+    border-color: white;
+    border-radius: 10px;
+    background: #487cff !important; 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-header .p-panel-header-icon { 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-content { 
+    border-radius: 10px;
+    background: white !important; 
+    color: black !important; 
+    font-weight: 500; 
+    font-size: 18px; 
+} 
+
+:host ::ng-deep .p-card > * {
+    width: 200px;
+    height: 400px;
+    padding: 1rem;
+    margin: 1rem;
 }
 
 .recipe {
-    max-width: 250px; 
-    max-height: 175px;
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.filtreNom {
+    margin-top: 1rem;
+}
+
+.filtreDurada {
+    margin-top: 3rem;
+}
+
+.filtreDificultat {
+    margin-top: 3rem;
+}
+
+.filtreDificultat p-button {
+    margin-right: 1rem;
+}
+
+:host ::ng-deep .botonsFiltrar .p-button{
+    margin-top : 5rem;
+    margin-right: 1rem;
+}
+
+:host ::ng-deep .botonsFiltrar .treureFiltres .p-button{
+    background-color: red;
+}
+
+.numberTimeSelector {
+    width: 150px;
+}
+
+.typeTimeSelector {
+    width: 250px;
 }

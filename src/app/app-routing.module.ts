@@ -2,17 +2,22 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { LoginComponent } from './login/login.component';
+import { LoginPageComponent } from './login/login.component';
+import { RegisterPageComponent } from './register/register.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login', // Redirigeix la ruta buida a la pàgina de login
+    redirectTo: '/home', // Redirigeix la ruta buida a la pàgina de home
     pathMatch: 'full',
   },
   {
     path: 'login',
-    component: LoginComponent,
+    component: LoginPageComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterPageComponent,
   },
   {
     path: 'home',

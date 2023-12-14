@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { Receipts } from '../../models/receipts.model';
+import { Recipes } from '../../models/recipes.model';
 import { Ingredients } from '../../models/ingredients.model';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
+import { getFirestore, doc, setDoc, updateDoc, where, DocumentData, Query, query } from "firebase/firestore";
+import { collection, getDoc, getDocs } from '@angular/fire/firestore';
+import { Auth, getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-home',
@@ -11,53 +15,136 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  public showRecipe: boolean = false;
-  public currentReceipt: Receipts = new Receipts;
-  receipts: Receipts[] = []; 
+  public isLoggedIn: boolean = false;
+  private db = getFirestore();
+  logo: string = '/assets/images/easychef.png';
+  showRecipe: boolean = false;
+  currentRecipe: Recipes = new Recipes;
+  showFilters: boolean = false;
+  showRemoveFilters: boolean = false;
 
-  constructor(private router: Router) {}
+  recipeForm: boolean = false;
+  formMode: string = ''; // formMode = 'new' per crear recepta i 'edit' per editarla
 
-  ngOnInit(): void {
-    
-    this.receipts = this.getReceptes(); // Crida a la firebase per obtenir receptes.
+  filterName: string = '';
+  filterDuration: number = 0;
+  selectedDifficulty: string = '';
+  selectedTime: string = '';
+  receipts: Recipes[] = [];
+  filteredReceipts: Recipes[] = [];
+
+  times = [
+    {name: 'minuts', value: 'minuts'},
+    {name: 'hores', value: 'hores'}
+  ];
+
+
+  constructor(private router: Router, public authService: AuthService, private afAuth: Auth) {
+    this.afAuth.onAuthStateChanged(user => {
+      this.isLoggedIn = !!user;
+    });
   }
 
-  getReceptes(): Receipts[] { // Ara tenim receptes de prova
-
-    const ingredients1: Ingredients[] = [
-      { id: 1, name: "Farina" },
-      { id: 2, name: "Ous" },
-      { id: 3, name: "Llevat" },
-    ];
-    
-    const ingredients2: Ingredients[] = [
-      { id: 4, name: "Carn de pollastre" },
-      { id: 5, name: "Ceba" },
-      { id: 6, name: "Espècies" },
-    ];
-    
-    const ingredients3: Ingredients[] = [
-      { id: 7, name: "Arros" },
-      { id: 8, name: "Tomàquet" },
-      { id: 9, name: "Oli d'oliva" },
-    ];
-
-    const testReceipt: Receipts[] = [ // Receptes de prova
-      { id: 1, name: "Pa de casa", ingredients: ingredients1, description:"Aquesta recepta es el pa de casa", difficulty: "Mitjana", time: "2 hores", image: 'assets/images/pa.png' },
-      { id: 2, name: "Pollastre al forn", ingredients: ingredients2, description:"Aquesta recepta es el pollastre al forn", difficulty: "Fàcil", time: "1 hora", image: 'assets/images/pollastre.png' },
-      { id: 3, name: "Paella", ingredients: ingredients3, description:"Aquesta recepta es la paella", difficulty: "Mitjana", time: "45 minuts", image: 'assets/images/paella.png' },
-      { id: 4, name: "Tiramisú", ingredients: ingredients1, description:"Aquesta recepta es el tiramisu", difficulty: "Fàcil", time: "4 hores", image: 'assets/images/tiramisu.png' },
-    ];
-
-    return testReceipt;
+  async ngOnInit(): Promise<void> {
+    this.receipts = await this.getReceptes(); // Crida a la firebase per obtenir receptes.
+    this.filteredReceipts = this.receipts;
   }
+
+  goToLogin(): void { // Metode per anar al login.
+    this.router.navigate(['/login']);
+  }
+
+  logout(): void { // Metode per fer logout.
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  async getReceptes(): Promise<Recipes[]> {
+    const recipesRef = collection(this.db, "recipes");
+    let firebaseQuery: Query<DocumentData> = recipesRef; // Canviem el nom de la variable a 'firebaseQuery'
+  
+    // Aplica els filtres a la consulta
+    if (this.filterName) {
+      firebaseQuery = query(firebaseQuery, where('name', '>=', this.filterName), where('name', '<=', this.filterName + '\uf8ff'));
+    }
+    if (this.filterDuration) {
+      console.log(this.filterDuration + " " + this.selectedTime);
+      firebaseQuery = query(firebaseQuery, where('time', '==', this.filterDuration + " " + this.selectedTime));
+    }
+    if (this.selectedDifficulty) {
+      firebaseQuery = query(firebaseQuery, where('difficulty', '==', this.selectedDifficulty));
+    }
+  
+    const querySnapshot = await getDocs(firebaseQuery);
+    const receptes: Recipes[] = [];
+  
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+      const recepta = { id: doc.id, ...doc.data() } as Recipes;
+      receptes.push(recepta);
+    });
+  
+    return receptes as Recipes[];
+  }
+  
 
   goToProfile(): void { // Metode per anar al perfil.
     this.router.navigate(['/profile']);
   }
 
-  goToReceipt(receipt: Receipts): void { // Metode per anar al perfil.
+  goToReceipt(receipt: Recipes): void {
+    this.recipeForm = false;
     this.showRecipe = true;
-    this.currentReceipt = receipt;
+    this.currentRecipe = receipt;
+  }
+
+  newRecipe() { // Metode per obrir el formulari de recepta
+    this.recipeForm = true;
+    this.formMode = 'new'; 
+  }
+
+  closeDetail() {
+    this.showRecipe = false;
+    this.getReceptes().then((receptes) => {
+      this.receipts = receptes;
+      this.filteredReceipts = receptes;
+    });
+  }
+
+  closeForm() { 
+    this.recipeForm = false;
+    this.getReceptes().then((receptes) => {
+      this.receipts = receptes;
+      this.filteredReceipts = receptes;
+    });
+  }
+
+  goToFilters(): void{
+    this.showFilters = true;
+  }
+
+  filterDifficulty(difficulty: string): void{
+    this.selectedDifficulty = difficulty;
+  }
+
+  applyFilters(): void{
+    this.getReceptes().then(async (receptes) => {
+      this.filteredReceipts = await this.getReceptes();
+      this.showFilters = false;
+      if(this.filteredReceipts !== this.receipts)
+        this.showRemoveFilters = true;
+    });
+  }
+
+  removeFilters(): void{
+    this.filteredReceipts = this.receipts;
+    this.showRemoveFilters = false;
+    this.showFilters = false;
+    this.filterName = '';
+    this.selectedDifficulty = '';
+  }
+
+  goToHome(): void {
+    this.router.navigate(['/home']);
   }
 }

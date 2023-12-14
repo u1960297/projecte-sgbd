@@ -1,23 +1,58 @@
-<div style="display: flex; justify-content: flex-end;">
-    <!-- Altres elements -->
-    <p-button label="Profile" icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+<div class="header">
+    <img src=" {{logo}} " class="logo" (click)="goToHome()"> 
+    <div class="buttons">
+        <p-button *ngIf="isLoggedIn" label="Perfil"  icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+        <p-button *ngIf="!isLoggedIn" label="Inicia sessió" icon="pi pi-sign-in" (onClick)="goToLogin()"></p-button>
+        <p-button *ngIf="isLoggedIn" label="Tancar sessió" icon="pi pi-plus" (onClick)="logout()"></p-button>
+    </div>
 </div>
 
 <br>
 
-<p-panel header="Receipts">
+<p-panel header="Receptes">
+    <div style="display: flex; justify-content: space-between;">
+        <p-button label="Filtres" (onClick)="goToFilters()" [raised]="true"></p-button>
+        <p-button *ngIf="isLoggedIn" label="Nova recepta" (onClick)="newRecipe()" icon="pi pi-plus" [raised]="true"></p-button>
+    </div>
+
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
-        <p-card *ngFor="let receipt of receipts" (dblclick)="goToReceipt(receipt)">
-            <img class="recipe" [src]="receipt.image" alt="{{receipt.name}}">
-            <p>{{receipt.name}}</p>
-            <p>{{receipt.time}}</p>
-            <p>{{receipt.difficulty}}</p>
-            <p>{{receipt.description}}</p>
+        <p-card *ngFor="let receipt of filteredReceipts" (dblclick)="goToReceipt(receipt)">
+            <app-recipe [recipe]="receipt" [detail]="false" ></app-recipe>
         </p-card>
-    </div> 
+    </div>
 </p-panel>
 
-<p-dialog header="{{currentReceipt.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
+<p-dialog *ngIf="recipeForm" header="Formulari de recepta" [(visible)]="recipeForm" [style]="{width: '50vw'}" 
         [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
-    <app-receipt [receipt]="currentReceipt"></app-receipt>
+    <app-form-recipe [mode]="formMode" (addedSuccessfully)="closeForm()"></app-form-recipe>
+</p-dialog>
+
+<p-dialog *ngIf="showRecipe" header="{{currentRecipe.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
+        [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+    <app-recipe [recipe]="currentRecipe" [detail]="true" (closeDetail)="closeDetail()"></app-recipe>
+</p-dialog>
+
+<p-dialog header="Filtres" [(visible)]="showFilters" [style]="{width: '50vw'}"
+        [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+    <div>
+        <div class="filtreNom">
+            <p>Nom</p>
+            <input pInputText type="text" [(ngModel)]="filterName" />
+        </div>
+        <div class="filtreDurada">
+            <p>Durada</p>
+            <input pInputText type="number" class="numberTimeSelector" [(ngModel)]="filterDuration" />
+            <p-dropdown [options]="times" [(ngModel)]="selectedTime" optionLabel="name" optionValue="name" [showClear]="true" placeholder="Minuts o hores?"></p-dropdown>
+        </div>
+        <div class="filtreDificultat">
+            <p>Dificultat</p>
+            <p-button label="Fàcil" (onClick)="filterDifficulty('Fàcil')"></p-button>
+            <p-button label="Mitjà" (onClick)="filterDifficulty('Mitjana')"></p-button>
+            <p-button label="Difícil" (onClick)="filterDifficulty('Difícil')"></p-button>
+        </div>
+        <div class="botonsFiltrar">
+            <p-button label="Filtrar" (onClick)="applyFilters()"></p-button>
+            <p-button class="treureFiltres" *ngIf="showRemoveFilters" label="Treure filtres" (onClick)="removeFilters()"></p-button>
+        </div>
+    </div>
 </p-dialog>

@@ -1,0 +1,32 @@
+<form [formGroup]="recipeForm">
+    <label for="name" class="titol">Nom:</label>
+    <input type="text" pInputText formControlName="name"/>
+  
+    <label for="description" class="titol">Descripció:</label>
+    <textarea rows="5" cols="30" pInputTextarea formControlName="description"></textarea>
+
+    <label for="ingredients" class="titol">Ingredients:</label>
+    <p-multiSelect [options]="ingredients" formControlName="ingredients" optionLabel="name" placeholder="Tria els ingredients"></p-multiSelect>
+  
+    <div *ngIf="mode === 'edit' && imageDownloadURL" class="current-image-container">
+      <img [src]="imageDownloadURL" alt="Current Image" class="current-image">
+    </div>
+
+    <label for="image" class="titol">Imatge:</label>
+    <p-fileUpload mode="basic" name="myFile" (onSelect)="onSelect($event)" chooseIcon="pi pi-search" chooseLabel="Browse"></p-fileUpload>
+
+    <label for="difficulty" class="titol">Dificultat:</label>
+    <div *ngFor="let dificultat of dificultats" class="field-checkbox">
+      <p-radioButton [inputId]="dificultat" [value]="dificultat" formControlName="dificultatTriada"></p-radioButton>
+      <label [for]="dificultat" class="ml-2">{{ dificultat }}</label>
+    </div>
+
+    <label for="steps" class="titol">Passos:</label>
+    <textarea rows="5" cols="30" pInputTextarea formControlName="steps"></textarea>
+  
+    <label for="time" class="titol">Temps:</label>
+    <input type="text" pInputText formControlName="time">
+  
+    <p-button *ngIf="mode === 'edit'" label="Edit recipe" (onClick)="editRecipe()" [disabled]="!recipeForm.valid"></p-button>
+    <p-button *ngIf="mode === 'new'" label="Create recipe" (onClick)="addRecipe()"[disabled]="!recipeForm.valid"></p-button>
+  </form>

@@ -1,0 +1,105 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 80px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.updateName{
+  margin-left: 10px;
+}
+
+.update-info {
+  display: grid;
+  gap: 10px;
+  font-weight: bold;  // Add this line
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.upload-button, .update-button {
+  padding: 10px 20px;
+  background-color: #487cff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.upload-button:hover, .update-button:hover {
+  background-color: #9a9bff;
+}
+
+//////////////////// Receptes pròpies ////////////////////
+
+:host ::ng-deep .buttons {
+  display: flex;
+  gap: 10px; /* Espai entre botons, ajusta segons necessites */
+}
+
+:host ::ng-deep .p-panel.p-component { 
+  border-radius: 10px; 
+} 
+:host ::ng-deep .p-panel .p-panel-header { 
+    border: 2px solid;
+    border-color: white;
+    border-radius: 10px;
+    background: #487cff !important; 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-header .p-panel-header-icon { 
+    color: white !important; 
+} 
+:host ::ng-deep .p-panel .p-panel-content { 
+    border-radius: 10px;
+    background: white !important; 
+    color: black !important; 
+    font-weight: 500; 
+    font-size: 18px; 
+} 
+
+:host ::ng-deep .p-card > * {
+    width: 200px;
+    height: 400px;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.recipe {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}

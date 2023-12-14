@@ -1,1 +1,38 @@
-<p>profile works!</p>
+<div class="header">
+<img src=" {{appLogo}} " class="logo" (click)="goToHome()"> 
+    <div class="buttons">
+        <p-button *ngIf="authService.isLoggedIn()" label="Tancar sessió" icon="pi pi-plus" (onClick)="logout()"></p-button>
+    </div>
+</div>
+
+<div class="profile-container" *ngIf="userData">
+    <div class="profile-info">
+        <img [src]="userData.image" class="profile-image" alt="Profile Image">
+        <h2 class="profile-name">Benvingut, {{ userData.name }}</h2>
+    </div>
+    <div class="update-info">
+        <p>Actualitza el teu usuari</p>
+        <form (submit)="updateUserName(newName.value)">
+            <input type="text" #newName placeholder="New name" required>
+            <p-button class="updateName" type="submit">Actualitza el nom</p-button>
+        </form>
+        <p>Actualitza la foto de perfil</p>
+        <input type="file" (change)="uploadProfileImage($event)" class="upload-button">
+    </div>
+</div>
+
+<!-- Receptes pròpies -->
+
+<br>
+<p-panel header="Receptes">
+    <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">
+        <p-card *ngFor="let receipt of receipts" (dblclick)="goToReceipt(receipt)">
+            <app-recipe [recipe]="receipt"></app-recipe>
+        </p-card>
+    </div> 
+</p-panel>
+
+<p-dialog *ngIf="showRecipe" header="{{currentReceipt.name}}" [(visible)]="showRecipe" [style]="{width: '50vw'}" 
+        [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+    <app-recipe [recipe]="currentReceipt" [detail]="true" (closeDetail)="closeDetail()"></app-recipe>
+</p-dialog>
