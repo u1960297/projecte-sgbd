@@ -1,9 +1,9 @@
 <div class="header">
     <img src=" {{logo}} " class="logo" (click)="goToHome()"> 
     <div class="buttons">
-        <p-button *ngIf="authService.isLoggedIn()" label="Perfil"  icon="pi pi-user" (onClick)="goToProfile()"></p-button>
-        <p-button *ngIf="!authService.isLoggedIn()" label="Inicia sessió" icon="pi pi-sign-in" (onClick)="goToLogin()"></p-button>
-        <p-button *ngIf="authService.isLoggedIn()" label="Tancar sessió" icon="pi pi-plus" (onClick)="logout()"></p-button>
+        <p-button *ngIf="isLoggedIn" label="Perfil"  icon="pi pi-user" (onClick)="goToProfile()"></p-button>
+        <p-button *ngIf="!isLoggedIn" label="Inicia sessió" icon="pi pi-sign-in" (onClick)="goToLogin()"></p-button>
+        <p-button *ngIf="isLoggedIn" label="Tancar sessió" icon="pi pi-plus" (onClick)="logout()"></p-button>
     </div>
 </div>
 
@@ -12,7 +12,7 @@
 <p-panel header="Receptes">
     <div style="display: flex; justify-content: space-between;">
         <p-button label="Filtres" (onClick)="goToFilters()" [raised]="true"></p-button>
-        <p-button *ngIf="authService.isLoggedIn()" label="Nova recepta" (onClick)="newRecipe()" icon="pi pi-plus" [raised]="true"></p-button>
+        <p-button *ngIf="isLoggedIn" label="Nova recepta" (onClick)="newRecipe()" icon="pi pi-plus" [raised]="true"></p-button>
     </div>
 
     <div style="display: grid; column-gap: 1rem; row-gap: 1rem; grid-template-columns: 1fr 1fr;">

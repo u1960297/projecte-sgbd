@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { getFirestore, doc, setDoc, updateDoc, where, DocumentData, Query, query } from "firebase/firestore";
 import { collection, getDoc, getDocs } from '@angular/fire/firestore';
+import { Auth, getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-home',
@@ -14,8 +15,7 @@ import { collection, getDoc, getDocs } from '@angular/fire/firestore';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router, public authService: AuthService) {}
-
+  public isLoggedIn: boolean = false;
   private db = getFirestore();
   logo: string = '/assets/images/easychef.png';
   showRecipe: boolean = false;
@@ -37,6 +37,13 @@ export class HomeComponent implements OnInit {
     {name: 'minuts', value: 'minuts'},
     {name: 'hores', value: 'hores'}
   ];
+
+
+  constructor(private router: Router, public authService: AuthService, private afAuth: Auth) {
+    this.afAuth.onAuthStateChanged(user => {
+      this.isLoggedIn = !!user;
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     this.receipts = await this.getReceptes(); // Crida a la firebase per obtenir receptes.

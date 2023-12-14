@@ -93,7 +93,7 @@ export class FormRecipeComponent implements OnInit {
           name: recipeData['name'],
           description: recipeData['description'],
           steps: recipeData['steps'],
-          ingredients: null, // Utilitza les dades dels ingredients en lloc de les referències
+          ingredients: recipeData['ingredients'],
           dificultatTriada: recipeData['difficulty'],
           time: recipeData['time'],
           image: recipeData['image']
